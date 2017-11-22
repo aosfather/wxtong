@@ -1,5 +1,7 @@
 package wx
 
+import "aosfather.com/bingo"
+
 type WxValidateRequest struct {
 	Timestamp string `Field:"timestamp"`
 	Nonce     string `Field:"nonce"`
@@ -39,7 +41,7 @@ type Menu struct {
 type EventHandle func(msg *WxMessageBody) interface{}
 
 type WxApp struct {
-	SimpleController
+	bingo.SimpleController
 	AppId string
 	Token string
 
@@ -91,11 +93,11 @@ func (this *WxApp) GetParameType(method string) interface{} {
 
 }
 
-func (this *WxApp) Get(Context, p interface{}) (interface{}, BingoError) {
+func (this *WxApp) Get(c bingo.Context, p interface{}) (interface{}, bingo.BingoError) {
 	if q, ok := p.(*WxRequest); ok {
 
 		if !this.Validate(q) {
-			return ModelView{"index.bingo", "hello"}, nil
+			return bingo.ModelView{"index.bingo", "hello"}, nil
 			//			return WxResponse{}, nil
 		}
 		return q.Echostr, nil
@@ -106,7 +108,7 @@ func (this *WxApp) Get(Context, p interface{}) (interface{}, BingoError) {
 }
 
 //正常的访问消息处理
-func (this *WxApp) Post(c Context, p interface{}) (interface{}, BingoError) {
+func (this *WxApp) Post(c bingo.Context, p interface{}) (interface{}, bingo.BingoError) {
 	if msg, ok := p.(*WxMessage); ok {
 		if this.Validate(&msg.WxRequest) {
 			msgbody := msg.data
